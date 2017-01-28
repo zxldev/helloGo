@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
+	"runtime"
 )
 
 //类型在变量名之后
@@ -65,6 +66,46 @@ func variableDef() {
 	fmt.Println(a, b, c, d, e, f, g, h)
 	fmt.Println(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19)
 }
+
+func loop() {
+	//for 是c中不要括号
+	sum := 0
+	for i := 0; i < 10; i++ {
+		sum += i
+	}
+	fmt.Println(sum)
+	//for 是c 中 while 不要括号
+	total := 100
+	for total < 1000 {
+		total += total
+	}
+	fmt.Println(total)
+	// if 是c中不要括号
+	if total < 1000 {
+
+	} else if total == 1600 && sum == 45 {
+		fmt.Println("test if success!")
+	} else {
+	}
+	//switch 1 初始化 2 没有括号 3 反向break
+	switch os := runtime.GOOS;os {
+	case "darwin":
+		fmt.Println("OS X.")
+	case "linux":
+		fmt.Println("Linux.")
+	default:
+		fmt.Printf("%s",os)
+	}
+}
+
+func Sqrt(x float64) float64 {
+	z := 1.0
+	for i := 0 ; i < 100000; i ++{
+		z = z - ((z*z-x)/2*z)
+ 	}
+	return z
+}
+
 func main() {
 	fmt.Println("hello Go")
 	fmt.Println("rand number:", rand.Intn(100))
@@ -73,4 +114,6 @@ func main() {
 	fmt.Println(swap("abc", "edf"))
 	fmt.Println(div(21, 5))
 	variableDef()
+	loop()
+	fmt.Println(Sqrt(2))
 }
