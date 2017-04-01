@@ -5,6 +5,7 @@ import (
 	"math"
 	"math/rand"
 	"runtime"
+	"strings"
 )
 
 //类型在变量名之后
@@ -81,13 +82,14 @@ func loop() {
 	}
 	fmt.Println(total)
 	// if 是c中不要括号
-	if total < 1000 {
-
+	// if 可以像for一样先执行一个语句
+	if x := 100 ; total < 1000 {
+		fmt.Print(x)
 	} else if total == 1600 && sum == 45 {
 		fmt.Println("test if success!")
 	} else {
 	}
-	//switch 1 初始化 2 没有括号 3 反向break
+	//switch 1 初始化 2 没有括号 3 反向break,关键字 fallthrough
 	switch os := runtime.GOOS;os {
 	case "darwin":
 		fmt.Println("OS X.")
@@ -106,7 +108,61 @@ func Sqrt(x float64) float64 {
 	return z
 }
 
+func pointer()  {
+	//指针和C中指针类似，但是没有指针的运算 不能执行 p = p + 1
+	j :=100
+	p := &j         // point to j
+	*p = *p / 37   // divide j through the pointer
+	fmt.Println(j) // see the new value of j
+}
+
+type Point struct {
+	x int
+	y int
+}
+type Circle struct {
+	radius int
+	middle Point
+}
+
+func printStruct()  {
+	circle := Circle{10,Point{1,1}}
+	fmt.Println(circle)
+	fmt.Println(circle.radius)
+	fmt.Println(circle.middle.x)
+}
+
+func printArray(){
+	var x [2]int
+	x[0] = 1
+	x[1] = 2
+	fmt.Println(x)
+
+	s := []int{2, 3, 5, 7, 11, 13}
+	fmt.Println("s ==", s)
+	//切片
+	fmt.Println("s[:2] ==",s[:2])
+
+	for i := 0; i < len(s); i++ {
+		fmt.Printf("s[%d] == %d\n", i, s[i])
+	}
+
+	table := [][]string{
+		[]string{"A","B","C"},
+		[]string{"A","B","C"},
+		[]string{"A","B","C"},
+	}
+	fmt.Println("二维数组",table[1][1],"长度",len(table),"链接",strings.Join(table[2]," "))
+
+}
+
+
+
 func main() {
+	for x:=1 ;x <5 ; x++ {
+		//先进后出
+		defer fmt.Println("这句话写在前面，但是会等待main(上层函数)调用后执行",x)
+	}
 	fmt.Println("hello Go")
 	fmt.Println("rand number:", rand.Intn(100))
 	fmt.Println("Pi is value:", math.Pi)
@@ -116,4 +172,7 @@ func main() {
 	variableDef()
 	loop()
 	fmt.Println(Sqrt(2))
+	pointer()
+	printStruct()
+	printArray()
 }
