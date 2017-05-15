@@ -6,6 +6,11 @@ import (
 	"math/rand"
 	"runtime"
 	"strings"
+
+	"image"
+	"bytes"
+	"image/png"
+	"encoding/base64"
 )
 
 //类型在变量名之后
@@ -120,9 +125,16 @@ type Point struct {
 	x int
 	y int
 }
+
+
+
 type Circle struct {
 	radius int
 	middle Point
+}
+
+func (c *Circle)getArea() float32{
+	return math.Pi*float32(c.radius)*float32(c.radius);
 }
 
 func printStruct()  {
@@ -154,8 +166,62 @@ func printArray(){
 	}
 	fmt.Println("二维数组",table[1][1],"长度",len(table),"链接",strings.Join(table[2]," "))
 
+	test := []int{1,2,3,4,5,6,7,8}
+	test2 := test[3:]
+	test3 := test[:3]
+	//len当前元素大小 cap 当前空间大小
+	fmt.Println(len(test2),cap(test2))
+	fmt.Println(len(test3),cap(test3))
+
+	s = append(s,3)
+	printSlice("x",s)
+
+	// range 返回切片key,val键值对 想单于 in
+	for i,v := range s {
+		fmt.Printf("%d => %d\n", i, v)
+	}
+
+	for i:= range s {
+		fmt.Printf("%d => \n", i)
+	}
+
+	for _,v:= range s {
+		fmt.Printf(" => %d\n", v)
+	}
+
 }
 
+func printSlice(s string, x []int) {
+	fmt.Printf("%s len=%d cap=%d %v\n",
+		s, len(x), cap(x), x)
+}
+
+func Pic(dx, dy int) [][]uint8 {
+	table := [][]uint8{}
+
+	for i := 0; i < dy; i++ {
+		line := []uint8{}
+		for j := 0; j < dx; j++ {
+			line = append(line, uint8(float64(j)*math.Log(float64(i))))
+		}
+		table = append(table, line)
+	}
+	return table
+}
+
+
+func WordCount(s string) map[string]int {
+
+	data := strings.Split(s," ");
+	mapData := map[string]int{}
+	for _,val := range data {
+		mapData[val]++
+	}
+	for key,val := range mapData{
+		fmt.Println(key,val)
+	}
+	return mapData
+}
 
 
 func main() {
@@ -175,4 +241,60 @@ func main() {
 	pointer()
 	printStruct()
 	printArray()
+	Show(Pic)
+	WordCount("ssss ss s s ss s s ");
+
+	addrs := map[string]IPAddr{
+		"loopback":  {127, 0, 0, 1},
+		"googleDNS": {8, 8, 8, 8},
+	}
+	for n, a := range addrs {
+		fmt.Printf("%v: %v\n", n, a)
+	}
+	//删除map元素
+	delete(addrs,"loopback")
+	//检测是否存在
+	elem,isExist := addrs["loopback"]
+	fmt.Println(elem,isExist)
+
+
+}
+
+func Show(f func(int, int) [][]uint8) {
+	const (
+		dx = 2
+		dy = 2
+	)
+	data := f(dx, dy)
+	m := image.NewNRGBA(image.Rect(0, 0, dx, dy))
+	for y := 0; y < dy; y++ {
+		for x := 0; x < dx; x++ {
+			v := data[y][x]
+			i := y*m.Stride + x*4
+			m.Pix[i] = v
+			m.Pix[i+1] = v
+			m.Pix[i+2] = 255
+			m.Pix[i+3] = 255
+		}
+	}
+	ShowImage(m)
+}
+
+
+type IPAddr [4]byte
+
+// TODO: Add a "String() string" method to IPAddr.
+func (ad IPAddr) String() string{
+	return fmt.Sprintf("%v.%v.%v.%v", ad[0],ad[1],ad[2],ad[3])
+}
+
+
+func ShowImage(m image.Image) {
+	var buf bytes.Buffer
+	err := png.Encode(&buf, m)
+	if err != nil {
+		panic(err)
+	}
+	enc := base64.StdEncoding.EncodeToString(buf.Bytes())
+	fmt.Println("IMAGE:" + enc)
 }
